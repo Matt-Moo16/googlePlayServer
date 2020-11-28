@@ -9,8 +9,8 @@ app.use(morgan('common'));
 const apps = require('./apps-data')
 
 app.get('/apps', (req, res) => {
-    const {sort, genres} = req.query
-    const requiredSortValues = ['rating', 'app']
+    const {sort, genres = ''} = req.query
+    const requiredSortValues = ['Rating', 'App']
     let results = apps
     genreUppercase = genres.charAt(0).toUpperCase() + genres.slice(1)
     if(genreUppercase) {
@@ -23,13 +23,13 @@ app.get('/apps', (req, res) => {
     }
 
     if(sort) {
-        if(!requiredSortValues.includes(sort)) {
+        sortUppercase = sort.charAt(0).toUpperCase() + sort.slice(1)
+        if(!requiredSortValues.includes(sortUppercase)) {
             return res
             .status(400)
             .send('Sort must be either rating or app')
         }
         else {
-            sortUppercase = sort.charAt(0).toUpperCase() + sort.slice(1)
             results.sort((a, b) => {
                 return (a[sortUppercase] < b[sortUppercase]) ? 1 : ((b[sortUppercase] < a[sortUppercase]) ? -1 : 0);
             });
@@ -42,3 +42,5 @@ app.get('/apps', (req, res) => {
 app.listen(5001, () => {
     console.log('Server started on Port 5001')
 });
+
+module.exports = app;
